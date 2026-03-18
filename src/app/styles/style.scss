@@ -1,0 +1,25 @@
+// === STYLES ===
+@use '@/shared/styles/base/reset';
+@use '@/shared/styles/base/typography';
+@use '@/shared/styles/base/theme';
+
+@use '@/shared/styles/components/button';
+@use '@/shared/styles/components/input';
+@use '@/shared/styles/components/link';
+@use '@/shared/styles/components/list';
+
+// === DEFAULTS ===
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    overflow-x: hidden;
+    background-color: var(--main-color);
+    transition: .4s ease-in-out;
+}
+
+img {
+    width: 100%;
+    height: auto;
+}

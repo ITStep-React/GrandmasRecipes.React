@@ -1,0 +1,23 @@
+@use '../abstracts/variables' as v;
+@use '../abstracts/mixins' as m;
+
+// === ROOT (LIGHT THEME) ===
+:root {
+    @include m.theme-vars(v.$colors);
+
+    @each $key, $value in v.$fonts {
+        --#{$key}-font: #{$value};
+    }
+
+    --basic-box-shadow: #{v.$shadow-basic};
+}
+
+
+// === DARK THEME ===
+[data-theme="dark"] {
+    @include m.theme-vars((
+        main: #2f2f2f,
+        text: #ffffff,
+        secondary: #ffffff,
+    ));
+}

@@ -1,0 +1,13 @@
+@use 'variables' as *;
+
+@mixin respond($breakpoint) {
+    @media (max-width: map-get($breakpoints, $breakpoint)) {
+        @content;
+    }
+}
+
+@mixin theme-vars($map) {
+    @each $key, $value in $map {
+        --#{$key}-color: #{$value};
+    }
+}

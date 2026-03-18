@@ -1,0 +1,40 @@
+// === FONT IMPORTS ===
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Zain:ital,wght@0,200;0,300;0,400;0,700;0,800;0,900;1,300;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Story+Script&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Tomorrow:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+// === SCSS VARIABLES ===
+$colors: (
+    main: #ffffff,
+    text: #2f2f2f,
+    secondary: #2f2f2f,
+    accent: #AB886D,
+    accent-dark: #493628,
+    error: #e75e5e,
+    negative: #ea7474,
+    attractive: #ffcc13,
+    neutral: #c0c0c0,
+    positive: #008f21,
+    light: #ffffff,
+);
+
+
+$fonts: (
+    default: "Zain" sans-serif,
+    footer-title: 'Pacifico' cursive,
+    price: 'Josefin Sans' sans-serif,
+    inputs: "Quicksand" sans-serif,
+    quote: "Story Script" sans-serif,
+    check: "Tomorrow" sans-serif
+);
+
+$shadow-basic: 0 3px 4px 3px rgba(0, 0, 0, 0.2);
+
+$breakpoints: (
+    tablet: 1250px,
+    mobile: 550px
+);

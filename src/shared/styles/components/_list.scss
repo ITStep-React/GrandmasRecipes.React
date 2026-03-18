@@ -1,0 +1,53 @@
+// === BASE LIST ===
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// === LIST COMPONENT ===
+.ulist {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  li {
+    position: relative;
+    padding-left: 1.5rem;
+    font-family: var(--default-font);
+    font-size: 1.4rem;
+    color: var(--secondary-color);
+    transition: color 0.3s;
+
+    &::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--accent-color);
+      font-size: 1.6rem;
+    }
+
+    &:hover {
+      color: var(--accent-color);
+    }
+  }
+}
+
+// === VARIATIONS ===
+.ulist--inline {
+  flex-direction: row;
+  gap: 1rem;
+
+  li {
+    padding-left: 0;
+
+    &::before {
+      content: none;
+    }
+  }
+}

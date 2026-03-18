@@ -1,0 +1,41 @@
+// === BASE BUTTON ===
+button {
+    transition: 0.4s;
+    background: none;
+    cursor: pointer;
+    border: none;
+}
+
+// === BUTTON COMPONENT ===
+.btn {
+    display: inline-block;
+    padding: 0.4rem 8rem;
+    transition: 0.4s;
+    background-color: var(--accent-color);
+    border: none;
+    border-radius: 10px;
+
+    font: {
+        size: 1.4rem;
+        family: var(--inputs-font);
+        weight: 500;
+    }
+
+    color: var(--light-color);
+    text-align: center;
+    text-decoration: none;
+    letter-spacing: 0.7px;
+    cursor: pointer;
+
+    &:hover {
+        box-shadow: 0 4px 0 0 var(--dark-accent-color);
+        transform: translateY(-10%);
+    }
+
+    // === MODIFIER ===
+    &.deactivated {
+        pointer-events: none;
+        opacity: 0.5;
+        cursor: default;
+    }
+}
