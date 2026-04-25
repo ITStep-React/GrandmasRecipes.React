@@ -1,0 +1,49 @@
+@use '@/shared/styles/abstracts/mixins' as m;
+
+.card {
+    display: flex;
+    flex-direction: column;
+    gap: .8rem;
+    flex-shrink: 0;
+    width: 13vw;
+    color: var(--secondary-color);
+    text-align: left;
+    font-family: var(--default-font);
+    font-weight: bold;
+    cursor: pointer;
+
+    @include m.respond(tablet) {
+        width: 13vh;
+    }
+
+    .imageWrap {
+        aspect-ratio: 6 / 3;
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        transition: transform 0.28s cubic-bezier(0.35, 1.55, 0.65, 1);
+        background: #e09a20;
+        border-radius: 14px;
+
+        &:hover {
+            transform: translateY(-4px) scale(1.015);
+        }
+
+        .image {
+            object-fit: cover;
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #c8820b 0%, #e09a20 50%, #b06f08 100%);
+        }
+    }
+
+    .label {
+        font-size: .9rem;
+    }
+}

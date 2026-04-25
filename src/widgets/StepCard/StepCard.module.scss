@@ -1,0 +1,112 @@
+.stepCard {
+    width: 15rem;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    flex-shrink: 0;
+
+
+    .imageContainer {
+        position: relative;
+        height: 7rem;
+
+        .image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .imagePlaceholder {
+            height: 100%;
+            background: var(--accent-color);
+            color: var(--white-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            gap: 8px;
+            
+            svg {
+                width: 100%;
+                height: 100%;
+                transition: transform .4s;
+            }
+
+            &:hover {
+                svg {
+                    transform: scale(1.1);
+                }
+            }
+
+        }
+
+        .imageIcon {
+            font-size: 3rem;
+        }
+
+        .stepNumber {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: var(--white-color);
+            color: var(--accent-color);
+            border-radius: 50%;
+            width: 1.5rem;
+            height: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .removeBtn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 1.5rem;
+            height: 1.5rem;
+            font-size: .8rem;
+            transition: transform 0.2s;
+
+            &:hover {
+                transform: scale(1.1);
+            }
+        }
+    }
+
+    .content {
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: .4rem;
+
+        .substepsHeader {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .addSubBtn {
+            font-size: 0.8rem !important;
+        }
+
+        .substepRow {
+            display: flex;
+            align-items: center;
+            padding: 0 .2rem;
+            margin-top: .2rem;
+        }
+
+        .substepRemoveBtn {
+            color: var(--red-color);
+            font-size: .8rem;
+
+            &:hover {
+                opacity: 0.7;
+            }
+        }
+    }
+}

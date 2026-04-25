@@ -1,40 +1,39 @@
-// === FONT IMPORTS ===
-@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Zain:ital,wght@0,200;0,300;0,400;0,700;0,800;0,900;1,300;1,400&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Story+Script&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Tomorrow:ital,wght@0,100..900;1,100..900&display=swap');
-
 
 // === SCSS VARIABLES ===
 $colors: (
     main: #ffffff,
     text: #2f2f2f,
     secondary: #2f2f2f,
-    accent: #AB886D,
-    accent-dark: #493628,
+    accent: #c78a52,
+    accent-dark: #5f4837,
     error: #e75e5e,
-    negative: #ea7474,
-    attractive: #ffcc13,
-    neutral: #c0c0c0,
-    positive: #008f21,
-    light: #ffffff,
+    like: #ea6359,
+    white: #ffffff,
+    gray: #979797,
+    black: #2f2f2f,
+    red: #ea7474,
+    yellow: #ffcc13,
+    green: #008f21,
+    blue: #00a1e1,
 );
 
 
 $fonts: (
-    default: "Zain" sans-serif,
-    footer-title: 'Pacifico' cursive,
-    price: 'Josefin Sans' sans-serif,
-    inputs: "Quicksand" sans-serif,
-    quote: "Story Script" sans-serif,
-    check: "Tomorrow" sans-serif
+    default: ("Zain", sans-serif),
+    style: ("Inria Sans", sans-serif),
+    footer-title: ("Pacifico", cursive),
+    like: ("Josefin Sans", sans-serif),
+    input: ("Quicksand", sans-serif),
+    quote: ("Story Script", sans-serif),
+    check: ("Tomorrow", sans-serif)
 );
 
 $shadow-basic: 0 3px 4px 3px rgba(0, 0, 0, 0.2);
 
 $breakpoints: (
+    UHD: 3840px,
+    QHD: 2560px,
+    FHD: 1920px,
     tablet: 1250px,
     mobile: 550px
 );

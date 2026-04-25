@@ -1,0 +1,55 @@
+.uploader {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+
+    .thumb {
+        position: relative;
+        width: 8rem;
+        aspect-ratio: 3 / 4;
+        overflow: hidden;
+        flex-shrink: 0;
+
+        img {
+            width: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        &:hover .removeBtn {
+            opacity: 1;
+        }
+    }
+
+    .main {
+        width: 10rem;
+        aspect-ratio: 3 / 4;
+    }
+
+    .removeBtn {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 1rem;
+        height: 1rem;
+    }
+
+    .dropzone {
+        width: 6rem;
+        height: 6rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .dropzoneIcon {
+        width: 100%;
+        height: 100%;
+
+        svg {
+            color: var(--secondary-color);
+        }
+    }
+}

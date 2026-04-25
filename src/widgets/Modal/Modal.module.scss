@@ -1,0 +1,52 @@
+@use '@/shared/styles/abstracts/mixins' as m;
+
+.overlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    inset: 0;
+    z-index: 1003;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 1rem;
+    overflow-y: auto;
+
+    @include m.respond(tablet) {
+        display: none;
+    }
+
+    .modal {
+        position: relative;
+        width: 100%;
+        max-width: 100vw;
+        background-color: var(--main-color);
+        border-radius: 20px;
+        overflow: hidden;
+
+        .closeBtn {
+            position: absolute;
+            top: .5rem;
+            right: .5rem;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--white-color);
+            cursor: pointer;
+            transition: background-color 0.4s ease-in-out, transform 0.15s ease;
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.25);
+            }
+
+            &:active {
+                transform: scale(0.92);
+            }
+        }
+    }
+}

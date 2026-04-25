@@ -1,5 +1,62 @@
 {
-  "welcome": "Welcome",
-  "login": "Login",
-  "logout": "Logout"
+    "languageName": "English",
+
+    "login": "Login",
+    "registration": "Registration",
+    "logout": "Logout",
+    "search": "Search",
+
+    "username": "Username",
+    "password": "Password",
+    "confirm-password": "Confirm Password",
+    "new-password": "New Password",
+    "email": "Email",
+
+    "home": "Home",
+    "create-recipe": "Create Recipe",
+    "liked-recipes": "Liked",
+    "categories": "Categories",
+    "cuisines": "Cuisines",
+    "cuisine": "Cuisine",
+    "difficulty": "Difficulty",
+    "calories": "Calories",
+    "languages": "Languages",
+    "account": "Account",
+    "about-project": "About project",
+
+    "last-reviewed": "Last Reviewed",
+    "newest-recipes": "Newest",
+    "popular-recipes": "Popular",
+
+    "GrandmasRecipes": "Grandma's Recipes",
+    "GrandmasJoy": "Grandma's Joy",
+
+    "recipe": "Recipe",
+    "recipes": "Recipes",
+    "ingredients": "Ingredients",
+
+    "title": "Title",
+    "description": "Description",
+    "reviews": "Reviews",
+    "send": "Send",
+    "step": "Step",
+    "steps": "Steps",
+    "substep": "Substep",
+    "substeps": "Substeps",
+    "next": "Next",
+    "add": "Add",
+    "save": "Save",
+    "reset-all": "Reset all",
+
+    "filters": "Filters",
+    "write-your-review": "Write your review",
+
+    "submit": "Submit",
+    "edit": "Edit", 
+    "delete": "Delete",
+
+    "edit-profile": "Edit Profile",
+
+    "published": "Published",
+    "likes": "Likes"
 }

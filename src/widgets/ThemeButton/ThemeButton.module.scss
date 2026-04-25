@@ -1,0 +1,76 @@
+.themeToggle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    height: 2.05rem;
+    background: linear-gradient(150deg, #d1e3ff 0%, #94c4ff 100%);
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+
+    &::before {
+        inset: 0;
+        content: "";
+        position: absolute;
+        opacity: 0;
+        transition: opacity 0.6s ease;
+        background: linear-gradient(135deg, #372c50 0%, #2a2a62 100%);
+    }
+
+    &:hover {
+        .sun,
+        .moon {
+            transform: translateX(-50%) scale(.9);
+        }
+    }
+
+    &.dark::before {
+        opacity: 1;
+    }
+
+    .icons {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+
+    .moon,
+    .sun {
+        aspect-ratio: 1 / 1;
+        fill: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform: translateX(-50%);
+        height: 100%;
+        transition: all 1s ease;
+    }
+
+    .moon {
+        left: -100%;
+        color: #ffffff;
+    }
+
+    .sun {
+        left: 100%;
+        color: #ffc72d;
+    }
+
+    &.dark .moon {
+        left: 50%;
+    }
+
+    &.dark .sun {
+        left: 150%;
+    }
+
+    &.light .moon {
+        left: -50%;
+    }
+
+    &.light .sun {
+        left: 50%;
+    }
+}

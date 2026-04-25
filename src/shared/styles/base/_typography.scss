@@ -4,12 +4,24 @@
 html {
     font-size: 16px;
 
+    @include m.respond(UHD) {
+        font-size: 28px;
+    }
+
+    @include m.respond(QHD) {
+        font-size: 25px;
+    }
+
+    @include m.respond(FHD) {
+        font-size: 22px;
+    }
+    
     @include m.respond(tablet) {
-        font-size: 14px;
+        font-size: 16px;
     }
 
     @include m.respond(mobile) {
-        font-size: 12px;
+        font-size: 13px;
     }
 }
 

@@ -1,0 +1,174 @@
+@use '@/shared/styles/abstracts/mixins' as m;
+
+.editor {
+    display: flex;
+    flex-direction: column;
+    padding: 2vh 4vw;
+    gap: 1.5rem;
+
+    @include m.respond(tablet) {
+        padding: 2vh 6vw;
+    }
+
+    @include m.respond(mobile) {
+        padding: 2vh 4vw;
+    }
+
+    .titleInput {
+        font-size: 1.4rem;
+
+    }
+
+    .descriptionTextarea {
+        font-size: 1.2rem;
+    }
+
+    .metaGrid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: .9rem;
+
+        @include m.respond(mobile) {
+            grid-template-columns: 1fr;
+        }
+
+        .metaItem {
+            display: flex;
+            flex-direction: column;
+            gap: .3rem;
+
+            .metaLabel {
+                font-size: 0.9rem;
+                text-transform: uppercase;
+            }
+
+            .metaInput,
+            .metaSelect {
+                border: 1px solid var(--white-color);
+                border-radius: 10px;
+                padding: .5rem .8rem;
+                font-size: 1rem;
+            }
+        }
+    }
+
+    .section {
+        margin-bottom: 2rem;
+
+        .sectionHeader {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: .6rem;
+        }
+
+        .sectionTitle {
+            font-size: 1.2rem;
+            font-family: var(--style-font);
+            margin-bottom: .6rem;
+        }
+    }
+
+    .categories {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .3rem;
+
+        .categoryChip {
+            display: inline-flex;
+            align-items: center;
+            gap: .3rem;
+            padding: .3rem .6rem;
+            border-radius: 30px;
+            font-size: 1rem;
+            border: 1.5px solid var(--secondary-color);
+            color: var(--secondary-color);
+            cursor: pointer;
+            transition: all 0.15s;
+            user-select: none;
+
+            &:hover {
+                border-color: var(--accent-color);
+                color: var(--accent-color);
+            }
+        }
+
+        .categoryChipActive {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+            color: var(--white-color);
+
+            &:hover {
+                background: var(--accent-color);
+                border-color: var(--accent-color);
+                color: var(--white-color);
+            }
+        }
+    }
+
+    .ingredientsContent {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+        .ingredientRow {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            border-radius: 12px;
+            padding: 8px;
+        }
+
+        .ingredientSelect,
+        .unitSelect {
+            flex: 2;
+            padding: 12px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .quantityInput {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 12px;
+            text-align: center;
+            font-size: 1rem;
+            outline: none;
+            min-width: 60px;
+        }
+
+        .removeBtn {
+            background: none;
+            border: none;
+            color: var(--red-color);
+            font-size: 1.4rem;
+            cursor: pointer;
+            padding: 4px;
+            line-height: 1;
+            flex-shrink: 0;
+
+            &:hover {
+                opacity: 0.7;
+            }
+        }
+    }
+
+    .addIngredientBtn {
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    .addStepBtn {
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    .stepsScroll {
+        display: flex;
+        gap: 24px;
+        overflow-x: auto;
+        padding-bottom: 20px;
+        align-items: flex-start;
+    }
+}

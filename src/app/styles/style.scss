@@ -1,3 +1,5 @@
+@use '@/shared/styles/abstracts/mixins' as m;
+
 // === STYLES ===
 @use '@/shared/styles/base/reset';
 @use '@/shared/styles/base/typography';
@@ -7,6 +9,16 @@
 @use '@/shared/styles/components/input';
 @use '@/shared/styles/components/link';
 @use '@/shared/styles/components/list';
+@use '@/shared/styles/components/containers';
+
+// === FONT IMPORTS ===
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Zain:ital,wght@0,200;0,300;0,400;0,700;0,800;0,900;1,300;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Story+Script&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Tomorrow:ital,wght@0,100..900;1,100..900&display=swap');
 
 // === DEFAULTS ===
 html {
@@ -16,10 +28,27 @@ html {
 body {
     overflow-x: hidden;
     background-color: var(--main-color);
+    color: var(--secondary-color);
     transition: .4s ease-in-out;
+    min-height: 100vh;
+    font-size: 1rem;
 }
 
 img {
     width: 100%;
     height: auto;
+}
+
+main {
+    display: grid;
+    grid-template-columns: 2fr 8fr;
+    min-width: 0;
+
+    &>* {
+        min-width: 0;
+    }
+
+    @include m.respond(tablet) {
+        display: unset;
+    }
 }
