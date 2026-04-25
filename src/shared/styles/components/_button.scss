@@ -8,28 +8,45 @@ button {
 
 // === BUTTON COMPONENT ===
 .btn {
-    display: inline-block;
-    padding: 0.4rem 8rem;
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    padding: 0.4rem 1rem;
     transition: 0.4s;
     background-color: var(--accent-color);
+    background-position: center;
+    background-size: cover;
+    cursor: pointer;
     border: none;
     border-radius: 10px;
-
-    font: {
-        size: 1.4rem;
-        family: var(--inputs-font);
-        weight: 500;
-    }
-
-    color: var(--light-color);
+    color: var(--white-color);
     text-align: center;
     text-decoration: none;
-    letter-spacing: 0.7px;
-    cursor: pointer;
+    letter-spacing: .1rem;
 
-    &:hover {
-        box-shadow: 0 4px 0 0 var(--dark-accent-color);
-        transform: translateY(-10%);
+    &>* {
+        position: relative;
+        z-index: 1;
+    }
+
+    &::before {
+        inset: 0;
+        content: "";
+        position: absolute;
+        transition: 0.4s;
+        background: rgba(0, 0, 0, 0);
+        border-radius: 10px;
+    }
+
+    &:hover::before {
+        background: rgba(0, 0, 0, 0.15);
+    }
+
+    font: {
+        size: 1rem;
+        family: var(--input-font);
+        weight: 500;
     }
 
     // === MODIFIER ===

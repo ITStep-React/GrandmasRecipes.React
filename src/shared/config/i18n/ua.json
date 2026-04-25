@@ -1,5 +1,62 @@
 {
-  "welcome": "Добро пожаловать",
-  "login": "Войти",
-  "logout": "Выйти"
+    "languageName": "Українська",
+
+    "login": "Увійти",
+    "registration": "Реєстрація",
+    "logout": "Вийти",
+    "search": "Пошук",
+
+    "username": "Ім'я користувача",
+    "password": "Пароль",
+    "confirm-password": "Підтвердіть пароль",
+    "new-password": "Новий пароль",
+    "email": "Електронна пошта",
+
+    "home": "Головна",
+    "create-recipe": "Створити рецепт",
+    "liked-recipes": "Улюблені",
+    "categories": "Категорії",
+    "cuisines": "Кухні",
+    "cuisine": "Кухня",
+    "difficulty": "Складність",
+    "calories": "Калорії",
+    "languages": "Мови",
+    "account": "Aкаунт",
+    "about-project": "O проекті",
+
+    "last-reviewed": "Останні переглянуті",
+    "newest-recipes": "Найновіші",
+    "popular-recipes": "Популярні",
+
+    "GrandmasRecipes": "Бабусині Рецепти",
+    "GrandmasJoy": "Бабусина Радість",
+
+    "recipe": "Рецепт",
+    "recipes": "Рецепти",
+    "ingredients": "Інгредієнти",
+
+    "title": "Назва",
+    "description": "Опис",
+    "reviews": "Відгуки",
+    "send": "Надіслати",
+    "step": "Крок",
+    "steps": "Кроки",
+    "substep": "Підкрок",
+    "substeps": "Підкроки",
+    "next": "Наступний",
+    "add": "Добавити",
+    "save": "Зберегти",
+    "reset-all": "Скинути все",
+
+    "filters": "Фільтри",
+    "write-your-review": "Напишіть свій відгук",
+
+    "submit": "Надіслати",
+    "edit": "Редагувати",
+    "delete": "Видалити",
+
+    "edit-profile": "Редагувати профіль",
+
+    "published": "Опубліковано",
+    "likes": "Лайки"
 }

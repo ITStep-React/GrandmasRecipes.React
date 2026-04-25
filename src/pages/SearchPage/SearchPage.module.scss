@@ -1,0 +1,47 @@
+@use '@/shared/styles/abstracts/mixins' as m;
+
+.page {
+    display: flex;
+    flex-direction: column;
+    row-gap: 2vh;
+    padding: 2vh 4vw;
+
+
+    @include m.respond(mobile) {
+        padding: .4rem;
+    }
+
+    .activeFilters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .3rem;
+        align-items: center;
+    }
+
+    .activeChip {
+        display: inline-flex;
+        gap: .5rem;
+        padding: .1rem .5rem;
+        border-radius: 10px;
+        background: var(--accent-color);
+        font-size: .8rem;
+    }
+
+    .activeChipRemove {
+        color: var(--white-color);
+        cursor: pointer;
+        font-size: .8rem;
+    }
+
+    .clearAll {
+        color: var(--gray-color);
+        cursor: pointer;
+        font-size: .8rem;
+        text-decoration: underline;
+        transition: color .3s;
+
+        &:hover {
+            color: var(--white-color);
+        }
+    }
+}

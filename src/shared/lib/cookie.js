@@ -14,11 +14,9 @@ export function getCookie(name) {
 
 export function setCookie(name, value, days) {
     let expires = "";
-    if (days > 0) {
-        const date = new Date();
-        date.setDate(date.getTime() + (1000 * 60 * 60 * 24 * days));
-        expires = "; expires=" + date.toUTCString();
-    }
+    const date = new Date();
+    date.setDate(date.getTime() + (60 * 60 * 24 * (days || 365)));
+    expires = "; expires=" + date.toUTCString();
     document.cookie = name + "=" + value + expires + "; path=/; SameSite=Lax";
 }
 

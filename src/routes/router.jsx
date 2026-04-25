@@ -1,27 +1,25 @@
-import { BrowserRouter, Route, Routes } from "react-router";
+import { Routes, Route } from 'react-router';
 
-import HomePage from '@/pages/HomePage/HomePage.jsx'
+import HomePage from '@/pages/HomePage/HomePage.jsx';
+import RecipePage from '@/pages/RecipePage/RecipePage.jsx';
+import AccountPage from '@/pages/AccountPage/AccountPage.jsx';
+import RecipeEditor from '@/pages/RecipeEditor/RecipeEditor.jsx';
+import SearchPage from '@/pages/SearchPage/SearchPage.jsx';
+import LikedPage from '@/pages/LikedPage/LikedPage.jsx';
 
-function AppRouter () {
-    return <BrowserRouter>
+function AppRouter() {
+    return (
         <Routes>
             <Route path='/' element={<HomePage />} />
-            {/* <Route path='/account' element={<AccountPage />}>
-                <Route path='info' element={<AccountBlock />} />
-                <Route path='orders' element={<OrdersBlock />} />
-                <Route index element={<Navigate to='info' replace />} />
-            </Route>
-            <Route path='/login' element={<LoginPage form={<LoginForm />} />} />
-            <Route path='/registration' element={<LoginPage form={<RegistrationForm />} />} />
-            <Route path='/cart' element={<CartPage />} />
-            <Route path='/checkout' element={<CheckOutPage />} />
-            <Route path='/categories' element={<CategoriesPage />} />
-            <Route path='/categories/:name' element={<CategoryPage />} />
-            <Route path='/products' element={<Navigate to='/' replace />} />
-            <Route path='/products/:id' element={<ProductPage />} />
-            <Route path='*' element={<NotFoundPage />} /> */}
+            <Route path='/recipe/:id' element={<RecipePage />} />
+            <Route path='/account' element={<AccountPage />} />
+            <Route path='/account/:id' element={<AccountPage />} />
+            <Route path='/editor' element={<RecipeEditor />} />
+            <Route path='/editor/:id' element={<RecipeEditor />} />
+            <Route path='/search' element={<SearchPage />} />
+            <Route path='/liked' element={<LikedPage />} />
         </Routes>
-    </BrowserRouter>
+    );
 }
 
 export default AppRouter;

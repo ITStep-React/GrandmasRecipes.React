@@ -1,0 +1,89 @@
+@use '@/shared/styles/abstracts/mixins' as m;
+
+.card {
+    display: flex;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    padding: 1rem .6rem;
+    width: 50vw;
+    aspect-ratio: 5 / 2;
+    flex-shrink: 0;
+    gap: .6rem;
+
+    @include m.respond(tablet) {
+        flex-direction: column;
+        width: 70vw;
+        aspect-ratio: 5 / 3;
+        padding: 1rem 1.5rem;
+    }
+
+    @include m.respond(mobile) {
+        width: 80vw;
+        aspect-ratio: 5 / 3;
+    }
+
+    .imageContainer {
+        height: 100%;
+        aspect-ratio: 1 / 1;
+        border-radius: 20px;
+        overflow: hidden;
+
+        @include m.respond(tablet) {
+            width: 100%;
+            height: unset;
+            aspect-ratio: 2 / 1;
+        }
+
+        .image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        flex: 1;
+    }
+
+    .step {
+        font-size: 1rem;
+        text-transform: uppercase;
+        color: var(--accent-color);
+    }
+
+    .substeps {
+        display: flex;
+        flex-direction: column;
+
+        .substep {
+            font-size: 1rem;
+            margin-top: -0.3rem;
+            transition: transform .3s ease;
+
+            &:hover {
+                transform: translateX(1%);
+            }
+        }
+    }
+
+    .title {
+        font-size: 1.1rem;
+    }
+
+    .desc {
+        font-size: 1rem;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .next {
+        @include m.respond(tablet) {
+            align-self: flex-end;
+            padding: .6rem 3rem;
+        }
+    }
+}

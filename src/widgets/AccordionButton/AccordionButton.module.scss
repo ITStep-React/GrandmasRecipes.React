@@ -1,0 +1,56 @@
+.item {
+    display: flex;
+    flex-direction: column;
+
+    .button {
+        &::before {
+            background: rgba(0, 0, 0, 0.4) !important;
+        }
+
+        &:hover::before {
+            background: rgba(0, 0, 0, 0.5) !important;
+        }
+
+        &.open {
+            border-radius: 20px 40px 10px 10px;
+        }
+
+        &.open::before {
+            border-radius: 20px 40px 10px 10px;
+        }
+
+        .arrow {
+            display: inline-block;
+            transition: transform 0.3s ease;
+            font-size: 11px;
+
+            &.up {
+                transform: rotate(-180deg);
+            }
+        }
+    }
+
+
+
+
+
+    .contentContainer {
+        overflow: hidden;
+        height: 0;
+        transition: height 0.3s ease, padding 0.3s ease, gap 0.3s ease;
+
+        &.open {
+            gap: 0.5vh;
+            padding: 1vh 1vh 1vh 0;
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5vh;
+            height: 0;
+            padding: .3vh 1vw 0 0;
+            transition: height 0.3s ease, padding 0.3s ease, gap 0.3s ease;
+        }
+    }
+}

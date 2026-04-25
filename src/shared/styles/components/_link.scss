@@ -6,24 +6,25 @@ a {
 
 // === LINK COMPONENT ===
 .lnk {
-  position: relative;
-  color: var(--accent-color);
-  display: inline-block;
-  transition: color 0.3s;
+    display: inline-block;
+    position: relative;
+    transition: color 0.3s;
+    cursor: pointer;
+    color: var(--accent-color);
 
-  &::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    width: 0;
-    height: 2px;
-    background-color: var(--accent-color);
-    transition: width 0.3s ease, left 0.3s ease; 
-  }
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: .3rem;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        transition: width 0.3s ease, left 0.3s ease;
+        background-color: var(--accent-color);
+    }
 
-  &:hover::after {
-    width: 100%;
-    left: 0;
-  }
+    &:hover::after {
+        left: 0;
+        width: 100%;
+    }
 }

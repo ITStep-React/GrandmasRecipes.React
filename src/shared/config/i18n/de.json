@@ -1,0 +1,62 @@
+{
+    "languageName": "Deutsch",
+
+    "login": "Anmelden",
+    "registration": "Registrierung",
+    "logout": "Abmelden",
+    "search": "Suchen",
+
+    "username": "Benutzername",
+    "password": "Passwort",
+    "confirm-password": "Passwort bestätigen",
+    "new-password": "Neues Passwort",
+    "email": "E-Mail",
+
+    "home": "Startseite",
+    "create-recipe": "Rezept erstellen",
+    "liked-recipes": "Gespeicherte",
+    "categories": "Kategorien",
+    "cuisines": "Küchen",
+    "cuisine": "Küche",
+    "difficulty": "Schwierigkeitsgrad",
+    "calories": "Kalorien",
+    "languages": "Sprachen",
+    "account": "Konto",
+    "about-project": "Über das Projekt",
+
+    "last-reviewed": "Letzte Bewertungen",
+    "newest-recipes": "Neueste",
+    "popular-recipes": "Beliebt",
+
+    "GrandmasRecipes": "Omas Rezepte",
+    "GrandmasJoy": "Omas Freude",
+
+    "recipe": "Rezept",
+    "recipes": "Rezepte",
+    "ingredients": "Zutaten",
+
+    "title": "Titel",
+    "description": "Beschreibung",
+    "reviews": "Bewertungen",
+    "send": "Senden",
+    "step": "Schritt",
+    "steps": "Schritte",
+    "substep": "Unterschritt",
+    "substeps": "Unterschritte",
+    "next": "Nächster",
+    "add": "Hinzufügen",
+    "save": "Speichern",
+    "reset-all": "Alles zurücksetzen",
+
+    "filters": "Filter",
+    "write-your-review": "Schreibe deine Bewertung",
+
+    "submit": "Absenden",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+
+    "edit-profile": "Profil bearbeiten",
+
+    "published": "Veröffentlicht",
+    "likes": "Gefällt mir"
+}
