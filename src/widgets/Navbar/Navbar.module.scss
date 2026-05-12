@@ -12,6 +12,10 @@ nav {
     background-color: var(--main-color);
     transition: background-color .4s ease-in-out;
 
+    @include m.respond(mobile) {
+        padding: 0 .8rem;
+    }
+
     .toHide {
         @include m.respond(tablet) {
             display: none;
@@ -50,7 +54,7 @@ nav {
                 position: absolute;
                 left: 100%;
                 top: 25%;
-                color: var(--white-color);
+                color: var(--secondary-color);
             }
         }
 
@@ -59,8 +63,18 @@ nav {
         }
     }
 
-    @include m.respond(mobile) {
-        padding: 0 .8rem;
+    .account {
+        color: var(--secondary-color);
+        transition: transform .2s;
+
+        svg {
+            width: 60%;
+            height: 60%;
+        }
+
+        &:hover {
+            transform: scale(1.2);
+        }
     }
 
 }

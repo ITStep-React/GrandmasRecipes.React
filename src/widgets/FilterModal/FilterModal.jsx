@@ -4,10 +4,10 @@ import { useSelector } from 'react-redux';
 
 import AccordionButton from '../AccordionButton/AccordionButton.jsx';
 
-import { selectCategories } from '@/features/category/categorySlice.js';
-import { selectCuisines } from '@/features/cuisine/cuisineSlice.js';
-import { selectDifficulties } from '@/features/difficulty/difficultySlice.js';
-import { selectProducts } from '@/features/product/productSlice.js';
+import { selectCategories } from '@/features/categorySlice.js';
+import { selectCuisines } from '@/features/cuisineSlice.js';
+import { selectDifficulties } from '@/features/difficultySlice.js';
+import { selectProducts } from '@/features/productSlice.js';
 
 import styles from './FilterModal.module.scss';
 

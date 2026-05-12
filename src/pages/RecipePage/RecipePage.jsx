@@ -13,7 +13,7 @@ import {
     selectRecipeLoadingCurrent,
     toggleLike,
     clearCurrentRecipe,
-} from '@/features/recipe/recipeSlice';
+} from '@/features/recipeSlice';
 import {
     fetchComments,
     addComment,
@@ -24,10 +24,10 @@ import {
     selectHasMoreComments,
     selectCommentsPage,
     clearComments,
-} from '@/features/comment/commentSlice';
-import { setFilter } from '@/features/search/searchSlice';
-import { fetchAuthorById, selectAuthorById } from '@/features/author/authorSlice';
-import { selectIsAuthenticated } from '@/features/auth/authSlice';
+} from '@/features/commentSlice';
+import { setFilter } from '@/features/searchSlice';
+import { fetchAuthorById, selectAuthorById } from '@/features/accountSlice';
+import { selectIsAuthenticated, selectMyId } from '@/features/authSlice';
 
 import useInfiniteScroll from '@/shared/lib/useInfiniteScroll';
 
@@ -38,12 +38,13 @@ function RecipePage() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { id } = useParams();
-    const recipeId = Number(id);
+    const recipeId = id;
 
     const recipe = useSelector(selectCurrentRecipe);
     const loadingRecipe = useSelector(selectRecipeLoadingCurrent);
     const isAuthenticated = useSelector(selectIsAuthenticated);
-    const author = useSelector(selectAuthorById(recipe?.authorId));
+    const myId = useSelector(selectMyId);
+    const author = useSelector(selectAuthorById(recipe?.author?.id));
     const comments = useSelector(selectComments);
     const loadingComments = useSelector(selectCommentsLoading);
     const addingComment = useSelector(selectCommentsAdding);
@@ -79,17 +80,17 @@ function RecipePage() {
     }, []);
 
     useEffect(() => {
-        dispatch(fetchRecipeById(recipeId));
-        dispatch(fetchComments({ recipeId, page: 1 }));
+        dispatch(fetchRecipeById({ id: recipeId, userId: myId }));
+        dispatch(fetchComments({ recipeId, page: 0 }));
         return () => {
             dispatch(clearCurrentRecipe());
             dispatch(clearComments());
         };
-    }, [dispatch, recipeId]);
+    }, [dispatch, recipeId, myId]);
 
     useEffect(() => {
-        if (recipe?.authorId) dispatch(fetchAuthorById(recipe.authorId));
-    }, [dispatch, recipe?.authorId]);
+        if (recipe?.author?.id) dispatch(fetchAuthorById(recipe.author.id));
+    }, [dispatch, recipe?.author?.id]);
 
     const loadMoreComments = useCallback(() => {
         if (!loadingComments && hasMoreComments) {
@@ -100,40 +101,44 @@ function RecipePage() {
     const commentSentinelRef = useInfiniteScroll(loadMoreComments, hasMoreComments, loadingComments);
 
     const handleLike = () => {
-        if (!isAuthenticated) { navigate('/account'); return; }
-        dispatch(toggleLike(recipeId));
+        if (!isAuthenticated || !myId) { navigate('/account'); return; }
+        dispatch(toggleLike({ recipeId: recipe.id, accountId: myId, isLiked: recipe.isLiked }));
     };
 
     const handleSendComment = () => {
         if (!isAuthenticated) { navigate('/account'); return; }
-        const text = commentText.trim();
-        if (!text) return;
-        dispatch(addComment({ recipeId, text }));
+        const comment = commentText.trim();
+        if (!comment) return;
+        dispatch(addComment({ recipeId, comment }));
         setCommentText('');
     };
 
     const handleFilter = (groupKey, id) => {
         dispatch(setFilter({ groupKey, id }));
         navigate('/search');
-    }
+    };
 
     if (loadingRecipe || !recipe) return null;
+
+    const authorNickname = recipe.author?.nickname ?? '';
+    const authorImageUrl = author?.imageUrl ?? recipe.author?.imageUrl ?? null;
+    const authorId = recipe.author?.id;
 
     return (
         <div className={styles.page}>
             <section className={styles.mediaContent}>
-                <ImageCarousel images={recipe.images} />
+                <ImageCarousel images={recipe.imageUrls ?? []} />
                 <div className={styles.info}>
                     <div className={styles.item}>
                         <span className={styles.label}>{i18n.t('cuisine')}</span>
-                        <button onClick={() => handleFilter('cuisineIds', recipe.cuisineId)} className={`lnk ${styles.value}`}>
-                            {recipe.cuisineName}
+                        <button onClick={() => handleFilter('cuisineIds', recipe.cuisine?.id)} className={`lnk ${styles.value}`}>
+                            {recipe.cuisine?.name}
                         </button>
                     </div>
                     <div className={styles.item}>
                         <span className={styles.label}>{i18n.t('difficulty')}</span>
-                        <button onClick={() => handleFilter('difficultyIds', recipe.difficultyId)} className={`lnk ${styles.value}`}>
-                            {recipe.difficultyName}
+                        <button onClick={() => handleFilter('difficultyIds', recipe.difficulty?.id)} className={`lnk ${styles.value}`}>
+                            {recipe.difficulty?.name}
                         </button>
                     </div>
                     <div className={styles.item}>
@@ -145,9 +150,9 @@ function RecipePage() {
 
             <section className={styles.socialContent}>
                 <div className={styles.info}>
-                    <h1 className={styles.title}>{recipe.name}</h1>
+                    <h1 className={styles.title}>{recipe.title}</h1>
                     <div className={styles.categories}>
-                        {recipe.categories.map((cat) => (
+                        {recipe.categories?.map((cat) => (
                             <button
                                 key={cat.id}
                                 onClick={() => handleFilter('categoryIds', cat.id)}
@@ -160,14 +165,14 @@ function RecipePage() {
                 </div>
                 <div className={styles.social}>
                     <button
-                        className={`${styles.like} ${recipe.likedByMe ? styles.likeActive : ''}`}
+                        className={`${styles.like} ${recipe.isLiked ? styles.likeActive : ''}`}
                         onClick={handleLike}
                         title={!isAuthenticated ? (i18n.t('login-to-like') ?? 'Log in to like') : undefined}
                     >
                         <svg viewBox='0 0 24 24' width={24} height={24}>
                             <path
                                 d='M16.5 3C19.538 3 22 5.5 22 9c0 7-7.5 11-10 12.5C9.5 20 2 16 2 9c0-3.5 2.5-6 5.5-6C9.36 3 11 4 12 5c1-1 2.64-2 4.5-2Z'
-                                fill={recipe.likedByMe ? 'currentColor' : 'none'}
+                                fill={recipe.isLiked ? 'currentColor' : 'none'}
                                 stroke='currentColor'
                                 strokeWidth='1.5'
                                 strokeLinecap='round'
@@ -176,12 +181,12 @@ function RecipePage() {
                         </svg>
                         <span>{recipe.likes}</span>
                     </button>
-                    <a href={`/account/${recipe.authorId}`} className={`lnk ${styles.nickname}`}>
-                        @{recipe.authorName}
+                    <a href={`/account/${authorId}`} className={`lnk ${styles.nickname}`}>
+                        @{authorNickname}
                     </a>
                     <img
-                        src={author?.imageUrl ?? recipe.authorImageUrl}
-                        alt={recipe.authorName}
+                        src={authorImageUrl}
+                        alt={authorNickname}
                         className={styles.avatar}
                     />
                 </div>
@@ -190,15 +195,15 @@ function RecipePage() {
             <section className={styles.ingredients}>
                 <h2 className={styles.sectionTitle}>{i18n.t('ingredients')}</h2>
                 <ul className={styles.content}>
-                    {recipe.ingredients.map((ing) => (
-                        <li key={ing.id} className={styles.ingredient}>
+                    {recipe.ingredients?.map((ing) => (
+                        <li key={ing.productId} className={styles.ingredient}>
                             <button
-                                onClick={() => handleFilter('productIds', ing.ingredientId)}
+                                onClick={() => handleFilter('productIds', ing.productId)}
                                 className={`lnk ${styles.name}`}
                             >
                                 {ing.productName}
                             </button>
-                            <span className={styles.amount}>{ing.amount} {ing.unit}</span>
+                            <span className={styles.amount}>{ing.amount} {ing.measure}</span>
                         </li>
                     ))}
                 </ul>
@@ -210,14 +215,14 @@ function RecipePage() {
             </section>
 
             <HorizontalScroll title={i18n.t('steps')}>
-                {recipe.steps.map((step) => (
+                {recipe.steps?.map((step) => (
                     <RecipeStep
-                        key={step.id}
+                        key={step.number}
                         step={step.number}
-                        title={step.name}
+                        title={step.title}
                         description={step.description}
                         image={step.imageUrl}
-                        substeps={step.substeps.map((s) => s.text)}
+                        substeps={step.subSteps ?? []}
                     />
                 ))}
             </HorizontalScroll>
@@ -252,12 +257,12 @@ function RecipePage() {
                             style={{ '--delay': `${idx * 0.08}s` }}
                         >
                             <div className={styles.info}>
-                                <img src={comment.authorImageUrl} alt={comment.authorName} className={styles.avatar} />
+                                <img src={comment.authorImageUrl} alt={comment.authorNickname} className={styles.avatar} />
                                 <a href={`/account/${comment.authorId}`} className={`lnk ${styles.nickname}`}>
-                                    @{comment.authorName}
+                                    @{comment.authorNickname}
                                 </a>
                             </div>
-                            <p className={styles.text}>{comment.text}</p>
+                            <p className={styles.text}>{comment.comment}</p>
                         </div>
                     ))}
                 </div>

@@ -24,13 +24,22 @@
         padding: .1rem .5rem;
         border-radius: 10px;
         background: var(--accent-color);
+        color: var(--white-color);
         font-size: .8rem;
+
+        @include m.respond(mobile) {
+            font-size: 1.3rem;
+        }
     }
 
     .activeChipRemove {
         color: var(--white-color);
         cursor: pointer;
         font-size: .8rem;
+
+        @include m.respond(mobile) {
+            font-size: 1.3rem;
+        }
     }
 
     .clearAll {
@@ -42,6 +51,10 @@
 
         &:hover {
             color: var(--white-color);
+        }
+
+        @include m.respond(mobile) {
+            font-size: 1.1rem;
         }
     }
 }

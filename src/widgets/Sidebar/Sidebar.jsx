@@ -13,11 +13,11 @@ import CuisinesImg from '@/assets/images/buttons/cuisines.avif';
 import DificultiesImg from '@/assets/images/buttons/dificulties.avif';
 import LanguagesImg from '@/assets/images/buttons/languages.avif';
 
-import { fetchCategories, selectCategories } from '@/features/category/categorySlice';
-import { fetchCuisines, selectCuisines } from '@/features/cuisine/cuisineSlice';
-import { fetchDifficulties, selectDifficulties } from '@/features/difficulty/difficultySlice';
-import { setFilter } from '@/features/search/searchSlice';
-import { selectIsAuthenticated } from '@/features/auth/authSlice';
+import { fetchCategories, selectCategories } from '@/features/categorySlice';
+import { fetchCuisines, selectCuisines } from '@/features/cuisineSlice';
+import { fetchDifficulties, selectDifficulties } from '@/features/difficultySlice';
+import { setFilter } from '@/features/searchSlice';
+import { selectIsAuthenticated } from '@/features/authSlice';
 
 import styles from './Sidebar.module.scss';
 
@@ -44,7 +44,7 @@ function Sidebar({ isOpen, onClose }) {
     const handleFilter = (groupKey, id) => {
         dispatch(setFilter({ groupKey, id }));
         navigate('/search');
-    }
+    };
 
     return <>
         <div
@@ -120,7 +120,7 @@ function Sidebar({ isOpen, onClose }) {
 
             <hr />
 
-            <ThemeButton styles={{ height: '6vh' }} />
+            <ThemeButton styles={{ minHeight: '6vh' }} />
 
             <AccordionButton
                 styles={{ height: '6vh' }}
@@ -146,7 +146,7 @@ function Sidebar({ isOpen, onClose }) {
             </span>
 
         </section>
-    </>
+    </>;
 }
 
 export default Sidebar;

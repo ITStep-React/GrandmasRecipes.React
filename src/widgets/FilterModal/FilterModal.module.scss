@@ -53,6 +53,7 @@
     .closeBtn {
         font-size: .8rem;
         transition: transform .2s;
+        color: var(--gray-color);
 
         &:hover {
             transform: scale(1.2);
@@ -153,7 +154,8 @@
     font-size: .6rem;
     padding: .2rem .4rem;
     border-radius: 10px;
-    border: 1px solid var(--white-color);
+    border: 1px solid var(--secondary-color);
+    color: var(--secondary-color);
     transition: border-color 0.15s, background 0.15s, color 0.15s;
 
     @include m.respond(mobile) {

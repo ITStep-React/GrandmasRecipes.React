@@ -4,10 +4,10 @@ import { useDispatch } from 'react-redux';
 import AppRouter from '@/routes/router';
 import Navbar from '@/widgets/Navbar/Navbar';
 import Sidebar from '@/widgets/Sidebar/Sidebar';
-import { fetchCategories } from '@/features/category/categorySlice';
-import { fetchCuisines }   from '@/features/cuisine/cuisineSlice';
-import { fetchDifficulties } from '@/features/difficulty/difficultySlice';
-import { fetchProducts }   from '@/features/product/productSlice';
+import { fetchCategories } from '@/features/categorySlice';
+import { fetchCuisines }   from '@/features/cuisineSlice';
+import { fetchDifficulties } from '@/features/difficultySlice';
+import { fetchProducts }   from '@/features/productSlice';
 
 function App() {
     const dispatch = useDispatch();

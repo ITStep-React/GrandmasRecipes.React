@@ -1,44 +1,45 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-
-let MOCK_COMMENTS = [
-    { id: 1, recipeId: 1, authorId: 2, authorName: 'marco_cooks', authorImageUrl: 'https://i.pravatar.cc/80?img=8', text: 'Absolutely stunning! My whole family loved it.' },
-    { id: 2, recipeId: 1, authorId: 3, authorName: 'sakura_eats', authorImageUrl: 'https://i.pravatar.cc/80?img=20', text: 'Easy to follow and the result is incredible.' },
-    { id: 3, recipeId: 2, authorId: 1, authorName: 'chefalex', authorImageUrl: 'https://i.pravatar.cc/80?img=5', text: 'Best carbonara I have ever made at home.' },
-    { id: 4, recipeId: 1, authorId: 4, authorName: 'brunch_queen', authorImageUrl: 'https://i.pravatar.cc/80?img=32', text: 'Perfetto! The crust came out perfectly crispy.' },
-];
-
-const delay = (ms = 300) => new Promise((r) => setTimeout(r, ms));
+import { api } from '@/shared/api/client.js';
+import { selectAccessToken } from '@/features/authSlice.js';
 
 const PAGE_SIZE = 10;
 
 export const fetchComments = createAsyncThunk(
     'comment/fetchByRecipe',
-    async ({ recipeId, page = 1 }) => {
-        await delay();
-        const filtered = MOCK_COMMENTS.filter((c) => c.recipeId === recipeId);
-        const items = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-        return { recipeId, items, total: filtered.length, page, pageSize: PAGE_SIZE };
+    async ({ recipeId, page = 0 }, { rejectWithValue }) => {
+        try {
+            const data = await api.get(`/reviews/recipe/${recipeId}?page=${page}`);
+            return {
+                recipeId,
+                items: data.items ?? [],
+                total: data.totalCount ?? 0,
+                page: data.pageNumber ?? page,
+                pageSize: data.pageSize ?? PAGE_SIZE,
+            };
+        } catch (e) {
+            return rejectWithValue(e.message);
+        }
     }
 );
 
 export const addComment = createAsyncThunk(
     'comment/add',
-    async ({ recipeId, text }, { getState, rejectWithValue }) => {
-        const me = getState().auth.user;
-        if (!me) return rejectWithValue('Not authenticated');
-
-        await delay();
-
-        const newComment = {
-            id: Date.now(),
-            recipeId,
-            authorId: me.id,
-            authorName: me.username,
-            authorImageUrl: me.avatarUrl ?? null,
-            text,
-        };
-        MOCK_COMMENTS.push(newComment);
-        return newComment;
+    async ({ recipeId, comment }, { getState, rejectWithValue }) => {
+        try {
+            const token = selectAccessToken(getState());
+            const authorId = getState().auth.user?.id;
+            await api.post(`/reviews/recipe/${recipeId}`, { recipeId, authorId, comment }, token);
+            return {
+                id: Date.now(),
+                recipeId,
+                authorId,
+                authorNickname: getState().auth.user?.nickname,
+                authorImageUrl: null,
+                comment,
+            };
+        } catch (e) {
+            return rejectWithValue(e.message);
+        }
     }
 );
 
@@ -48,11 +49,9 @@ const commentSlice = createSlice({
         items: [],
         recipeId: null,
         total: 0,
-        page: 1,
+        page: 0,
         pageSize: PAGE_SIZE,
-
         pendingComment: null,
-
         loading: false,
         adding: false,
         error: null,
@@ -62,7 +61,7 @@ const commentSlice = createSlice({
             state.items = [];
             state.recipeId = null;
             state.total = 0;
-            state.page = 1;
+            state.page = 0;
         },
     },
     extraReducers: (builder) => {
@@ -73,11 +72,10 @@ const commentSlice = createSlice({
                 state.recipeId = payload.recipeId;
                 state.total = payload.total;
                 state.page = payload.page;
-                state.items = payload.page === 1
-                    ? payload.items
-                    : [...state.items, ...payload.items];
+                state.pageSize = payload.pageSize;
+                state.items = payload.page === 0 ? payload.items : [...state.items, ...payload.items];
             })
-            .addCase(fetchComments.rejected, (state, { error }) => { state.loading = false; state.error = error.message; })
+            .addCase(fetchComments.rejected, (state, { payload, error }) => { state.loading = false; state.error = payload ?? error.message; })
 
             .addCase(addComment.pending, (state, { meta }) => {
                 state.adding = true;
@@ -85,8 +83,9 @@ const commentSlice = createSlice({
                     id: `pending-${Date.now()}`,
                     recipeId: meta.arg.recipeId,
                     authorId: null,
-                    authorName: '...',
-                    text: meta.arg.text,
+                    authorNickname: '...',
+                    authorImageUrl: null,
+                    comment: meta.arg.comment,
                     pending: true,
                 };
                 state.items = [state.pendingComment, ...state.items];
@@ -97,12 +96,12 @@ const commentSlice = createSlice({
                 state.pendingComment = null;
                 state.items = state.items.map((c) => c.pending ? payload : c);
             })
-            .addCase(addComment.rejected, (state, { error }) => {
+            .addCase(addComment.rejected, (state, { payload, error }) => {
                 state.adding = false;
                 state.items = state.items.filter((c) => !c.pending);
                 state.total = Math.max(0, state.total - 1);
                 state.pendingComment = null;
-                state.error = error.message;
+                state.error = payload ?? error.message;
             });
     },
 });

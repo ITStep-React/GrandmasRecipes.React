@@ -13,11 +13,11 @@ import {
     selectLikedRecipePage,
     toggleLike,
     clearLikedList,
-} from '@/features/recipe/recipeSlice';
+} from '@/features/recipeSlice';
 import {
     selectIsAuthenticated,
     selectMyId,
-} from '@/features/auth/authSlice';
+} from '@/features/authSlice';
 
 import useInfiniteScroll from '@/shared/lib/useInfiniteScroll.js';
 
@@ -29,7 +29,7 @@ function LikedPage() {
     const navigate = useNavigate();
 
     const isAuth = useSelector(selectIsAuthenticated);
-    const userId = useSelector(selectMyId);
+    const myId = useSelector(selectMyId);
 
     const recipes = useSelector(selectLikedRecipeList);
     const loading = useSelector(selectLikedRecipeLoading);
@@ -41,21 +41,25 @@ function LikedPage() {
     }, [isAuth, navigate]);
 
     useEffect(() => {
-        if (!userId) return;
+        if (!myId) return;
         dispatch(clearLikedList());
-        dispatch(fetchLikedRecipes({ userId, page: 1 }));
+        dispatch(fetchLikedRecipes({ userId: myId, page: 0 }));
         return () => { dispatch(clearLikedList()); };
-    }, [dispatch, userId]);
+    }, [dispatch, myId]);
 
     const loadMore = useCallback(() => {
-        if (!loading && hasMore) {
-            dispatch(fetchLikedRecipes({ userId, page: currentPage + 1 }));
+        if (!loading && hasMore && myId) {
+            dispatch(fetchLikedRecipes({ userId: myId, page: currentPage + 1 }));
         }
-    }, [dispatch, loading, hasMore, currentPage, userId]);
+    }, [dispatch, loading, hasMore, currentPage, myId]);
 
     const sentinelRef = useInfiniteScroll(loadMore, hasMore, loading);
 
-    const handleLike = (recipeId) => dispatch(toggleLike(recipeId));
+    const handleLike = (recipeId) => {
+        if (!myId) return;
+        const recipe = recipes.find((r) => r.id === recipeId);
+        dispatch(toggleLike({ recipeId, accountId: myId, isLiked: recipe?.isLiked ?? false }));
+    };
 
     if (!isAuth) return null;
 
