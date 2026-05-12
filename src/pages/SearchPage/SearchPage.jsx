@@ -1,13 +1,13 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import RecipeGrid from '@/widgets/RecipeGrid/RecipeGrid.jsx';
 
-import { fetchCategories } from '@/features/category/categorySlice';
-import { fetchCuisines } from '@/features/cuisine/cuisineSlice';
-import { fetchDifficulties } from '@/features/difficulty/difficultySlice';
-import { fetchProducts, fetchUnits } from '@/features/product/productSlice';
+import { fetchCategories } from '@/features/categorySlice';
+import { fetchCuisines } from '@/features/cuisineSlice';
+import { fetchDifficulties } from '@/features/difficultySlice';
+import { fetchProducts, fetchUnits } from '@/features/productSlice';
 import {
     fetchRecipes,
     selectRecipeList,
@@ -16,15 +16,16 @@ import {
     selectRecipePage,
     toggleLike,
     clearRecipeList,
-} from '@/features/recipe/recipeSlice';
+} from '@/features/recipeSlice';
 import {
     selectQuery, selectFilters, selectTotalActiveFilters,
-    removeFilter, clearFilters,
-} from '@/features/search/searchSlice';
-import { selectCategoryById } from '@/features/category/categorySlice';
-import { selectCuisineById } from '@/features/cuisine/cuisineSlice';
-import { selectDifficultyById } from '@/features/difficulty/difficultySlice';
-import { selectProductById } from '@/features/product/productSlice';
+    removeFilter, clearFilters, setQuery,
+} from '@/features/searchSlice';
+import { selectCategoryById } from '@/features/categorySlice';
+import { selectCuisineById } from '@/features/cuisineSlice';
+import { selectDifficultyById } from '@/features/difficultySlice';
+import { selectProductById } from '@/features/productSlice';
+import { selectIsAuthenticated, selectMyId } from '@/features/authSlice';
 
 import useInfiniteScroll from '@/shared/lib/useInfiniteScroll.js';
 
@@ -54,6 +55,9 @@ function SearchPage() {
     const { i18n } = useTranslation();
     const dispatch = useDispatch();
 
+    const isAuthenticated = useSelector(selectIsAuthenticated);
+    const myId = useSelector(selectMyId);
+
     const query = useSelector(selectQuery);
     const filters = useSelector(selectFilters);
     const totalActiveFilters = useSelector(selectTotalActiveFilters);
@@ -62,36 +66,61 @@ function SearchPage() {
     const loading = useSelector(selectRecipeLoadingList);
     const hasMore = useSelector(selectHasMoreRecipes);
     const currentPage = useSelector(selectRecipePage);
-    const [gridVisible,   setGridVisible]   = useState(false);
+    const debounceRef = useRef(null);
+    const [debouncedQuery, setDebouncedQuery] = useState(query);
+
+    useEffect(() => () => clearTimeout(debounceRef.current), []);
+
+    // Debounce query changes by 400ms before hitting the API
+    useEffect(() => {
+        clearTimeout(debounceRef.current);
+        debounceRef.current = setTimeout(() => {
+            setDebouncedQuery(query);
+        }, 400);
+    }, [query]);
+
+    const [gridVisible, setGridVisible] = useState(false);
 
     useEffect(() => {
         dispatch(fetchUnits());
         return () => { dispatch(clearRecipeList()); };
     }, [dispatch]);
 
+    const filtersKey = useMemo(() => JSON.stringify(filters), [filters]);
+
     useEffect(() => {
         setGridVisible(false);
         dispatch(clearRecipeList());
-        dispatch(fetchRecipes({ page: 1, ...filters })).then(() => {
+        dispatch(fetchRecipes({ page: 0, userId: myId, query: debouncedQuery, ...filters })).then(() => {
             requestAnimationFrame(() => setGridVisible(true));
         });
-    }, [dispatch, query, filters]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [dispatch, filtersKey, debouncedQuery, myId]);
 
     const loadMore = useCallback(() => {
         if (!loading && hasMore) {
-            dispatch(fetchRecipes({ page: currentPage + 1, ...filters }));
+            dispatch(fetchRecipes({ page: currentPage + 1, userId: myId, query: debouncedQuery, ...filters }));
         }
-    }, [dispatch, loading, hasMore, currentPage, filters]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [dispatch, loading, hasMore, currentPage, filtersKey, debouncedQuery, myId]);
 
     const sentinelRef = useInfiniteScroll(loadMore, hasMore, loading);
 
     const handleRemoveFilter = (groupKey, id) => dispatch(removeFilter({ groupKey, id }));
     const handleClearAll = () => dispatch(clearFilters());
-    const handleLike = (recipeId) => dispatch(toggleLike(recipeId));
+
+    const handleLike = (recipeId) => {
+        if (!isAuthenticated || !myId) return;
+        const recipe = recipes.find((r) => r.id === recipeId);
+        dispatch(toggleLike({ recipeId, accountId: myId, isLiked: recipe?.isLiked ?? false }));
+    };
 
     const activeChips = Object.entries(filters).flatMap(([groupKey, ids]) =>
         ids.map((id) => ({ groupKey, id }))
     );
+
+    // Server handles query filtering via /recipes/filter — use results directly
+    const displayedRecipes = recipes;
 
     return (
         <section className={styles.page}>
@@ -112,9 +141,9 @@ function SearchPage() {
             )}
             <div className={`${styles.results} ${gridVisible ? styles.resultsVisible : ''}`}>
                 <RecipeGrid
-                        recipes={recipes}
-                        loading={loading}
-                        onLike={handleLike}
+                    recipes={displayedRecipes}
+                    loading={loading}
+                    onLike={handleLike}
                 />
             </div>
 

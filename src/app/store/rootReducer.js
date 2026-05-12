@@ -1,19 +1,19 @@
 import { combineReducers } from '@reduxjs/toolkit';
 
-import authReducer from '@/features/auth/authSlice';
-import authorReducer from '@/features/author/authorSlice';
-import recipeReducer from '@/features/recipe/recipeSlice';
-import commentReducer from '@/features/comment/commentSlice';
-import categoryReducer from '@/features/category/categorySlice';
-import cuisineReducer from '@/features/cuisine/cuisineSlice';
-import difficultyReducer from '@/features/difficulty/difficultySlice';
-import productReducer from '@/features/product/productSlice';
-import bannerReducer from '@/features/banner/bannerSlice.js';
-import searchReducer from '@/features/search/searchSlice.js';
+import authReducer from '@/features/authSlice';
+import accountReducer from '@/features/accountSlice';
+import recipeReducer from '@/features/recipeSlice';
+import commentReducer from '@/features/commentSlice';
+import categoryReducer from '@/features/categorySlice';
+import cuisineReducer from '@/features/cuisineSlice';
+import difficultyReducer from '@/features/difficultySlice';
+import productReducer from '@/features/productSlice';
+import bannerReducer from '@/features/bannerSlice.js';
+import searchReducer from '@/features/searchSlice.js';
 
 const rootReducer = combineReducers({
     auth: authReducer,
-    author: authorReducer,
+    account: accountReducer,
     recipe: recipeReducer,
     comment: commentReducer,
     category: categoryReducer,

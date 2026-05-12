@@ -6,17 +6,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import ImageUploader from '@/widgets/ImageUploader/ImageUploader.jsx';
 import StepCard from '@/widgets/StepCard/StepCard.jsx';
 
-import {
-    createRecipe,
-    uploadRecipeImages,
-    uploadStepImage,
-    selectRecipeUploadingImages,
-} from '@/features/recipe/recipeSlice';
-import { selectIsAuthenticated } from '@/features/auth/authSlice';
-import { fetchCuisines, selectCuisines } from '@/features/cuisine/cuisineSlice';
-import { fetchDifficulties, selectDifficulties } from '@/features/difficulty/difficultySlice';
-import { fetchCategories, selectCategories } from '@/features/category/categorySlice';
-import { fetchProducts, fetchUnits, selectProducts, selectUnits } from '@/features/product/productSlice';
+import { createRecipe } from '@/features/recipeSlice';
+import { selectIsAuthenticated, selectMyId } from '@/features/authSlice';
+import { fetchCuisines, selectCuisines } from '@/features/cuisineSlice';
+import { fetchDifficulties, selectDifficulties } from '@/features/difficultySlice';
+import { fetchCategories, selectCategories } from '@/features/categorySlice';
+import { fetchProducts, fetchUnits, selectProducts, selectUnits } from '@/features/productSlice';
+
+import { uploadToCloud, uploadManyToCloud } from '@/shared/lib/cloudUpload.js';
 
 import styles from './RecipeEditor.module.scss';
 
@@ -26,7 +23,7 @@ function RecipeEditor() {
     const dispatch = useDispatch();
 
     const isAuth = useSelector(selectIsAuthenticated);
-    const uploadingImages = useSelector(selectRecipeUploadingImages);
+    const myId = useSelector(selectMyId);
 
     const cuisines = useSelector(selectCuisines);
     const difficulties = useSelector(selectDifficulties);
@@ -94,15 +91,14 @@ function RecipeEditor() {
     const addIngredient = () => {
         if (!products.length) return;
         const firstProduct = products[0];
-        const firstUnit = units[0]?.name ?? 'g';
+        const firstUnit = units[0] ?? null;
         setIngredients((prev) => [
             ...prev,
             {
                 id: Date.now(),
                 productId: firstProduct.id,
-                productName: firstProduct.name,
-                quantity: 100,
-                unit: firstUnit,
+                measureId: firstUnit?.id ?? null,
+                amount: 100,
             },
         ]);
     };
@@ -114,9 +110,8 @@ function RecipeEditor() {
         setIngredients((prev) =>
             prev.map((ing) => {
                 if (ing.id !== rowId) return ing;
-                if (field === 'productId') {
-                    const product = products.find((p) => p.id === Number(value));
-                    return { ...ing, productId: Number(value), productName: product?.name ?? '' };
+                if (field === 'productId' || field === 'measureId') {
+                    return { ...ing, [field]: Number(value) };
                 }
                 return { ...ing, [field]: value };
             })
@@ -171,68 +166,62 @@ function RecipeEditor() {
         );
 
     const handleSave = async () => {
-        if (!title.trim() || !cuisine || !difficulty) return;
+        if (!title.trim() || !cuisine || !difficulty || !myId) return;
 
         setSaving(true);
         try {
             let imageUrls = [];
             if (recipeImages.length > 0) {
                 const files = recipeImages.map((img) => img.file);
-                imageUrls = await dispatch(uploadRecipeImages(files)).unwrap();
+                imageUrls = await uploadManyToCloud(files);
             }
+
             const stepsWithUrls = await Promise.all(
                 steps.map(async (step) => {
                     let imageUrl = null;
                     if (step.imageFile) {
-                        imageUrl = await dispatch(uploadStepImage(step.imageFile)).unwrap();
+                        imageUrl = await uploadToCloud(step.imageFile);
                     }
                     return {
-                        id: step.id,
                         number: step.number,
-                        name: step.title,
+                        title: step.title,
                         description: step.description,
                         imageUrl,
-                        substeps: step.substeps.map((text, i) => ({
-                            id: i + 1,
-                            number: i + 1,
-                            text,
-                        })),
+                        subSteps: step.substeps,
                     };
                 })
             );
-            const selectedCategories = categories
-                .filter((c) => selectedCategoryIds.has(c.id))
-                .map(({ id, name }) => ({ id, name }));
 
-            const formattedIngredients = ingredients.map((ing, idx) => ({
-                id: idx + 1,
-                ingredientId: ing.productId,
-                productName: ing.productName,
-                amount: ing.quantity,
-                unit: ing.unit,
+            const formattedIngredients = ingredients.map((ing) => ({
+                productId: ing.productId,
+                measureId: ing.measureId,
+                amount: ing.amount,
             }));
 
-            const newRecipe = await dispatch(createRecipe({
-                name: title,
+            const created = await dispatch(createRecipe({
+                title,
                 description,
                 calories,
+                authorId: myId,
                 cuisineId: cuisine.id,
-                cuisineName: cuisine.name,
                 difficultyId: difficulty.id,
-                difficultyName: difficulty.name,
-                categories: selectedCategories,
+                categoryIds: [...selectedCategoryIds],
                 ingredients: formattedIngredients,
                 steps: stepsWithUrls,
-                images: imageUrls,
+                imageUrls,
             })).unwrap();
 
-            navigate(`/recipe/${newRecipe.id}`);
+            if (created?.id) navigate(`/recipe/${created.id}`);
+            else navigate('/');
         } catch (err) { } finally {
             setSaving(false);
         }
     };
 
-    const isBusy = saving || uploadingImages;
+    const isBusy = saving;
+
+    const getProductName = (productId) => products.find((p) => p.id === productId)?.name ?? '';
+    const getMeasureName = (measureId) => units.find((u) => u.id === measureId)?.name ?? '';
 
     return (
         <div className={styles.editor}>
@@ -335,17 +324,17 @@ function RecipeEditor() {
                             <input
                                 type='number'
                                 min={0}
-                                value={ing.quantity}
-                                onChange={(e) => updateIngredient(ing.id, 'quantity', Number(e.target.value) || 0)}
+                                value={ing.amount}
+                                onChange={(e) => updateIngredient(ing.id, 'amount', Number(e.target.value) || 0)}
                                 className={styles.quantityInput}
                             />
                             <select
-                                value={ing.unit}
-                                onChange={(e) => updateIngredient(ing.id, 'unit', e.target.value)}
+                                value={ing.measureId ?? ''}
+                                onChange={(e) => updateIngredient(ing.id, 'measureId', e.target.value)}
                                 className={styles.unitSelect}
                             >
                                 {units.map((u) => (
-                                    <option key={u.name} value={u.name}>{u.name}</option>
+                                    <option key={u.id} value={u.id}>{u.name}</option>
                                 ))}
                             </select>
                             <button type='button' className={styles.removeBtn} onClick={() => removeIngredient(ing.id)}>

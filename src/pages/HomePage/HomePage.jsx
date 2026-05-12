@@ -8,8 +8,8 @@ import RecipeCard from '@/widgets/RecipeCard/RecipeCard.jsx';
 import CategoryCard from '@/widgets/CategoryCard/CategoryCard.jsx';
 import RecipeGrid from '@/widgets/RecipeGrid/RecipeGrid.jsx';
 
-import { fetchBanners, selectBanners } from '@/features/banner/bannerSlice';
-import { fetchCategories, selectCategories } from '@/features/category/categorySlice';
+import { fetchBanners, selectBanners } from '@/features/bannerSlice';
+import { fetchCategories, selectCategories } from '@/features/categorySlice';
 import {
     fetchRecipes,
     fetchLatestRecipes,
@@ -19,12 +19,11 @@ import {
     selectHasMoreRecipes,
     selectRecipePage,
     selectLatestRecipes,
-    selectLatestRecipesLoading,
     selectRecentlyViewed,
-    selectRecentlyViewedLoading,
     toggleLike,
     clearRecipeList,
-} from '@/features/recipe/recipeSlice';
+} from '@/features/recipeSlice';
+import { selectIsAuthenticated, selectMyId } from '@/features/authSlice';
 
 import useInfiniteScroll from '@/shared/lib/useInfiniteScroll';
 
@@ -34,6 +33,9 @@ function HomePage() {
     const { i18n } = useTranslation();
     const dispatch = useDispatch();
 
+    const isAuthenticated = useSelector(selectIsAuthenticated);
+    const myId = useSelector(selectMyId);
+
     const banners = useSelector(selectBanners);
     const categories = useSelector(selectCategories);
     const recipes = useSelector(selectRecipeList);
@@ -42,26 +44,29 @@ function HomePage() {
     const currentPage = useSelector(selectRecipePage);
     const latestRecipes = useSelector(selectLatestRecipes);
     const recentlyViewed = useSelector(selectRecentlyViewed);
-    const loadingRecent = useSelector(selectRecentlyViewedLoading);
 
     useEffect(() => {
         dispatch(fetchBanners());
         dispatch(fetchCategories());
-        dispatch(fetchRecipes({ page: 1 }));
+        dispatch(fetchRecipes({ page: 0, userId: myId }));
         dispatch(fetchLatestRecipes());
         dispatch(fetchRecentlyViewed());
         return () => { dispatch(clearRecipeList()); };
-    }, [dispatch]);
+    }, [dispatch, myId]);
 
     const loadMore = useCallback(() => {
-        if (!loading && hasMore) {
-            dispatch(fetchRecipes({ page: currentPage + 1 }));
-        }
-    }, [dispatch, loading, hasMore, currentPage]);
+        dispatch(fetchRecipes({ page: currentPage + 1, userId: myId }));
+    }, [dispatch, currentPage, myId]);
 
     const sentinelRef = useInfiniteScroll(loadMore, hasMore, loading);
 
-    const handleLike = (recipeId) => dispatch(toggleLike(recipeId));
+    const handleLike = (recipeId) => {
+        if (!isAuthenticated || !myId) return;
+        const recipe = recipes.find((r) => r.id === recipeId)
+            ?? latestRecipes.find((r) => r.id === recipeId)
+            ?? recentlyViewed.find((r) => r.id === recipeId);
+        dispatch(toggleLike({ recipeId, accountId: myId, isLiked: recipe?.isLiked ?? false }));
+    };
 
     return (
         <div className={styles.page}>

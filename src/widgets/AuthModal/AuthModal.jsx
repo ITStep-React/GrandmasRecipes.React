@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { login, register, selectAuthStatus, selectAuthError } from '@/features/auth/authSlice';
+import { login, register, selectAuthStatus, selectAuthError } from '@/features/authSlice';
 
 import AuthBanner from '@/assets/images/banners/auth_banner.avif';
 
@@ -27,7 +27,7 @@ function AuthModal({ isOpen, onClose }) {
     const [mounted, setMounted] = useState(false);
     const [tab, setTab] = useState('login');
 
-    const [username, setUsername] = useState('');
+    const [nickname, setNickname] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -61,7 +61,7 @@ function AuthModal({ isOpen, onClose }) {
     if (!mounted) return null;
 
     const resetForm = () => {
-        setUsername(''); setEmail('');
+        setNickname(''); setEmail('');
         setPassword(''); setConfirmPassword('');
         setLocalErrors({});
     };
@@ -76,8 +76,8 @@ function AuthModal({ isOpen, onClose }) {
 
     const validate = () => {
         const e = {};
-        if (!isLogin && !username.trim()) e.username = 'required';
-        if (!isLogin && !email.trim()) e.email = 'required';
+        if (!isLogin && !nickname.trim()) e.nickname = 'required';
+        if (!email.trim()) e.email = 'required';
         if (!password) e.password = 'required';
         if (!isLogin && password !== confirmPassword) e.confirmPassword = 'mismatch';
         if (password && password.length < 4) e.password = 'too-short';
@@ -91,11 +91,11 @@ function AuthModal({ isOpen, onClose }) {
         setLocalErrors({});
 
         if (isLogin) {
-            await dispatch(login({ username, password }));
+            await dispatch(login({ email, password }));
         } else {
-            const result = await dispatch(register({ username, email, password }));
+            const result = await dispatch(register({ nickname, email, password }));
             if (register.fulfilled.match(result)) {
-                await dispatch(login({ username, password }));
+                await dispatch(login({ email, password }));
             }
         }
     };
@@ -113,7 +113,6 @@ function AuthModal({ isOpen, onClose }) {
                 className={`${styles.modal} ${visible ? styles.visible : ''}`}
                 onClick={(e) => e.stopPropagation()}
             >
-                {/* Табы */}
                 <div className={styles.tabs}>
                     {TABS.map((t) => (
                         <button
@@ -144,58 +143,41 @@ function AuthModal({ isOpen, onClose }) {
 
                         {!isLogin && (
                             <div className={styles.field}>
-                                <label className={styles.label} htmlFor='reg-username'>
+                                <label className={styles.label} htmlFor='reg-nickname'>
                                     {i18n.t('username')}
                                 </label>
                                 <input
-                                    id='reg-username'
-                                    name='username'
+                                    id='reg-nickname'
+                                    name='nickname'
                                     type='text'
-                                    autoComplete='username'
-                                    className={`${styles.input} ${localErrors.username ? styles.inputError : ''}`}
+                                    autoComplete='nickname'
+                                    className={`${styles.input} ${localErrors.nickname ? styles.inputError : ''}`}
                                     disabled={isLoading}
-                                    {...inputProps(username, setUsername, 'username', clearError)}
+                                    {...inputProps(nickname, setNickname, 'nickname', clearError)}
                                 />
-                                {localErrors.username && (
+                                {localErrors.nickname && (
                                     <span className={styles.fieldError}>{i18n.t('required') ?? 'Required'}</span>
                                 )}
                             </div>
                         )}
 
-                        {isLogin ? (
-                            <div className={styles.field}>
-                                <label className={styles.label} htmlFor='login-username'>
-                                    {i18n.t('username')}
-                                </label>
-                                <input
-                                    id='login-username'
-                                    name='username'
-                                    type='text'
-                                    autoComplete='username'
-                                    className={`${styles.input} ${localErrors.username ? styles.inputError : ''}`}
-                                    disabled={isLoading}
-                                    {...inputProps(username, setUsername, 'username', clearError)}
-                                />
-                            </div>
-                        ) : (
-                            <div className={styles.field}>
-                                <label className={styles.label} htmlFor='reg-email'>
-                                    {i18n.t('email')}
-                                </label>
-                                <input
-                                    id='reg-email'
-                                    name='email'
-                                    type='email'
-                                    autoComplete='email'
-                                    className={`${styles.input} ${localErrors.email ? styles.inputError : ''}`}
-                                    disabled={isLoading}
-                                    {...inputProps(email, setEmail, 'email', clearError)}
-                                />
-                                {localErrors.email && (
-                                    <span className={styles.fieldError}>{i18n.t('required') ?? 'Required'}</span>
-                                )}
-                            </div>
-                        )}
+                        <div className={styles.field}>
+                            <label className={styles.label} htmlFor={isLogin ? 'login-email' : 'reg-email'}>
+                                {i18n.t('email')}
+                            </label>
+                            <input
+                                id={isLogin ? 'login-email' : 'reg-email'}
+                                name='email'
+                                type='email'
+                                autoComplete='email'
+                                className={`${styles.input} ${localErrors.email ? styles.inputError : ''}`}
+                                disabled={isLoading}
+                                {...inputProps(email, setEmail, 'email', clearError)}
+                            />
+                            {localErrors.email && (
+                                <span className={styles.fieldError}>{i18n.t('required') ?? 'Required'}</span>
+                            )}
+                        </div>
 
                         <div className={styles.field}>
                             <label className={styles.label} htmlFor={isLogin ? 'login-password' : 'reg-password'}>

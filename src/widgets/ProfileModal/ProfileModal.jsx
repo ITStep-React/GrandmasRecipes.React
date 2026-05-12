@@ -3,13 +3,14 @@ import { useTranslation } from 'react-i18next';
 
 import styles from './ProfileModal.module.scss';
 
-function ProfileModal({ isOpen, onClose, user, onSave }) {
-    const { i18n } = useTranslation()
+function ProfileModal({ isOpen, onClose, user, onSave, uploadingAvatar }) {
+    const { i18n } = useTranslation();
 
     const [visible, setVisible] = useState(false);
     const [mounted, setMounted] = useState(false);
-    const [username, setUsername] = useState(user?.username ?? '');
-    const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl ?? null);
+    const [nickname, setNickname] = useState(user?.nickname ?? '');
+    const [avatarFile, setAvatarFile] = useState(null);
+    const [avatarPreview, setAvatarPreview] = useState(user?.imageUrl ?? null);
     const [password, setPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [passwordError, setPasswordError] = useState(false);
@@ -26,6 +27,11 @@ function ProfileModal({ isOpen, onClose, user, onSave }) {
         }
     }, [isOpen]);
 
+    useEffect(() => {
+        setNickname(user?.nickname ?? '');
+        setAvatarPreview(user?.imageUrl ?? null);
+    }, [user]);
+
     const handleTransitionEnd = (e) => {
         if (e.target === e.currentTarget && !isOpen) setMounted(false);
     };
@@ -41,8 +47,9 @@ function ProfileModal({ isOpen, onClose, user, onSave }) {
     const handleAvatarChange = (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
+        setAvatarFile(file);
         const url = URL.createObjectURL(file);
-        setAvatarUrl(url);
+        setAvatarPreview(url);
         e.target.value = '';
     };
 
@@ -52,7 +59,7 @@ function ProfileModal({ isOpen, onClose, user, onSave }) {
             return;
         }
         setPasswordError(false);
-        onSave?.({ username, avatarUrl, password, newPassword });
+        onSave?.({ nickname, avatarFile, password, newPassword });
         handleClose();
     };
 
@@ -73,9 +80,9 @@ function ProfileModal({ isOpen, onClose, user, onSave }) {
                 </button>
 
                 <div className={styles.header}>
-                    <div className={styles.avatar} onClick={handleAvatarClick}>
-                        {avatarUrl
-                            ? <img src={avatarUrl} alt='avatar' className={styles.image} />
+                    <div className={`${styles.avatar} ${uploadingAvatar ? styles.avatarUploading : ''}`} onClick={handleAvatarClick}>
+                        {avatarPreview
+                            ? <img src={avatarPreview} alt='avatar' className={styles.image} />
                             : <div className={styles.fallback}>@</div>
                         }
                         <div className={styles.overlay}></div>
@@ -87,10 +94,6 @@ function ProfileModal({ isOpen, onClose, user, onSave }) {
                             onChange={handleAvatarChange}
                         />
                     </div>
-
-                    <div className={styles.info}>
-                        <span className={styles.email}>{user?.email ?? 'email@gmail.com'}</span>
-                    </div>
                 </div>
 
                 <div className={styles.body}>
@@ -99,8 +102,8 @@ function ProfileModal({ isOpen, onClose, user, onSave }) {
                         <input
                             type='text'
                             className={styles.input}
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            value={nickname}
+                            onChange={(e) => setNickname(e.target.value)}
                         />
                     </div>
 
@@ -110,7 +113,7 @@ function ProfileModal({ isOpen, onClose, user, onSave }) {
                             type='password'
                             className={`${styles.input} ${passwordError ? styles.inputError : ''}`}
                             value={password}
-                            onChange={(e) => { setPassword(e.target.value); }}
+                            onChange={(e) => { setPassword(e.target.value); setPasswordError(false); }}
                         />
                     </div>
 
@@ -126,7 +129,7 @@ function ProfileModal({ isOpen, onClose, user, onSave }) {
                 </div>
 
                 <div className={styles.footer}>
-                    <button className={`btn ${styles.submit}`} onClick={handleSubmit}>
+                    <button className={`btn ${styles.submit}`} onClick={handleSubmit} disabled={uploadingAvatar}>
                         {i18n.t('submit')}
                     </button>
                 </div>

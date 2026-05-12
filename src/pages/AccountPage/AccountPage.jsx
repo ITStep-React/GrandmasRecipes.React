@@ -10,21 +10,24 @@ import AuthModal from '@/widgets/AuthModal/AuthModal.jsx';
 import {
     selectAuthUser,
     selectIsAuthenticated,
+    selectMyId,
     updateProfile,
-    uploadAvatar,
-    selectUploadingAvatar,
-} from '@/features/auth/authSlice';
-import { fetchAuthorById, selectAuthorById } from '@/features/author/authorSlice';
+} from '@/features/authSlice';
 import {
-    fetchRecipes,
+    fetchAuthorById,
+    selectAuthorById,
+} from '@/features/accountSlice';
+import {
+    fetchRecipesByAuthor,
     selectRecipeList,
     selectRecipeLoadingList,
     selectHasMoreRecipes,
     selectRecipePage,
     toggleLike,
     clearRecipeList,
-} from '@/features/recipe/recipeSlice';
+} from '@/features/recipeSlice';
 
+import { uploadToCloud } from '@/shared/lib/cloudUpload.js';
 import useInfiniteScroll from '@/shared/lib/useInfiniteScroll';
 
 import styles from './AccountPage.module.scss';
@@ -35,15 +38,14 @@ function AccountPage() {
     const { id } = useParams();
 
     const me = useSelector(selectAuthUser);
+    const myId = useSelector(selectMyId);
     const isAuthenticated = useSelector(selectIsAuthenticated);
-    const uploadingAvatar = useSelector(selectUploadingAvatar);
 
-    const authorId = id ? Number(id) : null;
-    const isOwn = !authorId || authorId === me?.id;
-    const targetId = isOwn ? me?.id : authorId;
+    const authorId = id ? id : null;
+    const isOwn = !authorId || authorId === myId;
+    const targetId = isOwn ? myId : authorId;
 
     const publicAuthor = useSelector(selectAuthorById(targetId));
-    const account = isOwn ? me : publicAuthor;
 
     const recipes = useSelector(selectRecipeList);
     const loading = useSelector(selectRecipeLoadingList);
@@ -51,55 +53,62 @@ function AccountPage() {
     const currentPage = useSelector(selectRecipePage);
 
     const [modalOpen, setModalOpen] = useState(false);
+    const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
     useEffect(() => {
         if (!isOwn && targetId) dispatch(fetchAuthorById(targetId));
-        if (targetId) dispatch(fetchRecipes({ page: 1, authorId: targetId }));
+        if (targetId) dispatch(fetchRecipesByAuthor({ authorId: targetId, page: 0 }));
         return () => { dispatch(clearRecipeList()); };
     }, [dispatch, isOwn, targetId]);
 
     const loadMore = useCallback(() => {
         if (!loading && hasMore && targetId) {
-            dispatch(fetchRecipes({ page: currentPage + 1, authorId: targetId }));
+            dispatch(fetchRecipesByAuthor({ authorId: targetId, page: currentPage + 1 }));
         }
     }, [dispatch, loading, hasMore, currentPage, targetId]);
 
     const sentinelRef = useInfiniteScroll(loadMore, hasMore, loading);
 
-    const handleSaveProfile = async ({ username, password, avatarFile }) => {
-        let avatarUrl;
-        if (avatarFile) {
-            const result = await dispatch(uploadAvatar(avatarFile)).unwrap();
-            avatarUrl = result.url;
+    const handleSaveProfile = async ({ nickname, password, avatarFile }) => {
+        try {
+            let imageUrl;
+            if (avatarFile) {
+                setUploadingAvatar(true);
+                imageUrl = await uploadToCloud(avatarFile);
+            }
+            dispatch(updateProfile({ nickname, password, imageUrl }));
+            setModalOpen(false);
+        } catch (err) {
+        } finally {
+            setUploadingAvatar(false);
         }
-        dispatch(updateProfile({ username, password, avatarUrl }));
-        setModalOpen(false);
     };
 
-    const handleLike = (recipeId) => dispatch(toggleLike(recipeId));
+    const handleLike = (recipeId) => {
+        if (!isAuthenticated || !myId) return;
+        const recipe = recipes.find((r) => r.id === recipeId);
+        dispatch(toggleLike({ recipeId, accountId: myId, isLiked: recipe?.isLiked ?? false }));
+    };
 
     if (isOwn && !isAuthenticated) {
         return (
             <div className={styles.page}>
-                <AuthModal
-                    isOpen={true}
-                    onClose={null}
-                    onSubmit={(data) => console.log(data)}
-                />
+                <AuthModal isOpen={true} onClose={null} />
             </div>
         );
     }
 
+    const account = isOwn ? me : publicAuthor;
     if (!account) return null;
 
-    const displayName = account.username ?? account.name ?? '—';
-    const avatarSrc = account.avatarUrl ?? account.imageUrl ?? `https://i.pravatar.cc/80?u=${targetId}`;
+    const displayName = account.nickname ?? '—';
+    const avatarSrc = account.imageUrl ?? null;
 
     return (
         <>
             <div className={styles.page}>
                 <section className={styles.account}>
-                    <img src={avatarSrc} alt={displayName} className={styles.avatar} />
+                    <img src={avatarSrc} className={styles.avatar} />
                     <span className={styles.nickname}>@{displayName}</span>
                     <div className={styles.info}>
                         <div className={styles.item}>
@@ -146,9 +155,8 @@ function AccountPage() {
                     onClose={() => setModalOpen(false)}
                     uploadingAvatar={uploadingAvatar}
                     user={{
-                        username: me?.username,
-                        email: me?.email,
-                        avatarUrl: me?.avatarUrl,
+                        nickname: me?.nickname,
+                        imageUrl: me?.imageUrl,
                     }}
                     onSave={handleSaveProfile}
                 />

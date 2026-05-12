@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router';
 import { useDispatch } from 'react-redux';
 
-import { setFilter } from '@/features/search/searchSlice';
+import { setFilter } from '@/features/searchSlice';
 
 import styles from './CategoryCard.module.scss';
 

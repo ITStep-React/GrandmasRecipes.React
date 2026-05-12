@@ -30,6 +30,7 @@
             aspect-ratio: 1 / 1;
             object-fit: cover;
             border-radius: 50%;
+            background-color: var(--accent-color);
 
             @include m.respond(mobile) {
                 width: 50%;
